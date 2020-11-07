@@ -2,6 +2,7 @@
 /* C declarations */
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 #include <math.h>
 #define YYSTYPE double
 double result; /*이전 result 값 기억*/
@@ -26,12 +27,13 @@ line	: expr '\n'	{ result = $1; printf("Result: %f\n", $1);}
 		;
 expr	: expr '+' term { $$ = $1 + $3; }
 		| expr '-' term { $$ = $1 - $3; }
-		| CEIL '(' expr ')' {$$ = ceil($2);}
-		| FLOOR '(' expr ')' {$$ = floor($2);}
+		| CEIL '(' expr ')' {$$ = ceil($2);} // $2보다 작지 않은 최소 크기의 정수 반환
+		| FLOOR '(' expr ')' {$$ = floor($2);} //$2보다 크지않은 최대크기의 정수 반환
 		| term { $$ = $1; }
 		;
 term	: term '*' factor { $$ = $1 * $3; }
 		| term '/' factor { $$ = $1 / $3; }
+		| term '^' factor { $$ = pow($1, $3); }
 		| factor { $$ = $1; }
 		;
 factor	: '(' expr ')' { $$ = $2; }
@@ -54,8 +56,8 @@ int yylex(void) {
 		char *word;
 		ungetc(c,stdin);
 		word = getword(c); 
-		if (strcmp(word,"ceil")) return CEIL;
-		if (strcmp(word,"floor")) return FLOOR;
+		if (strcmp(word,"ceil")) {printf("c\n"); return CEIL;}
+		if (strcmp(word,"floor")) {printf("f\n");return FLOOR;}
 	}
 	return c;
 }
@@ -65,6 +67,7 @@ char* getword(int c) {
 	int len = 0;
 	while ((c=getchar()) != EOF && isalpha(c)) 
 		word[len++] = c;
+	ungetc(c,stdin);
 	word[len] = '\0';
 	return word;
 }
