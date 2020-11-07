@@ -5,13 +5,14 @@
 #include <string.h>
 #include <math.h>
 #define YYSTYPE double
-double result; /*이전 result 값 기억*/
+double result = 0; /*이전 result 값 기억*/
 int yylex();
 void yyerror(const char*); 
 char* getword(int c);
 %}
 /* Bison declarations */
 %token NUMBER
+%token EMPTY
 %token CEIL
 %token FLOOR
 %left '+' '-'
@@ -38,8 +39,9 @@ term	: term '*' factor { $$ = $1 * $3; }
 		;
 factor	: '(' expr ')' { $$ = $2; }
 		| NUMBER { $$ = $1; }
-		| '-' NUMBER { $$ = -$2; }
 		| '_' { $$ = result; }
+		| EMPTY { $$ = result; }
+		| '-' NUMBER { $$ = -$2; }
 		;
 
 %%
@@ -56,8 +58,8 @@ int yylex(void) {
 		char *word;
 		ungetc(c,stdin);
 		word = getword(c); 
-		if (strcmp(word,"ceil")) {printf("c\n"); return CEIL;}
-		if (strcmp(word,"floor")) {printf("f\n");return FLOOR;}
+		if (strcmp(word,"ceil") == 0) {printf("c\n"); return CEIL;}
+		if (strcmp(word,"floor") == 0) {printf("f\n");return FLOOR;}
 	}
 	return c;
 }
@@ -65,8 +67,9 @@ int yylex(void) {
 char* getword(int c) {
 	char *word;
 	int len = 0;
-	while ((c=getchar()) != EOF && isalpha(c)) 
+	while ((c=getchar()) != EOF && isalpha(c)) {
 		word[len++] = c;
+	}
 	ungetc(c,stdin);
 	word[len] = '\0';
 	return word;
