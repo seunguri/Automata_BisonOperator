@@ -60,6 +60,15 @@ int yylex(void) {
 	return c;
 }
 
+char* getword(int c) {
+	char *word;
+	int len = 0;
+	while ((c=getchar()) != EOF && isalpha(c)) 
+		word[len++] = c;
+	word[len] = '\0';
+	return word;
+}
+
 void yyerror(const char *s)
 {
 	fprintf(stderr, "%s\n", s);
