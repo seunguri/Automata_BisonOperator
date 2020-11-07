@@ -24,17 +24,18 @@ input	:
 		| input line
 		;
 line	: expr '\n'	{ result = $1; printf("Result: %f\n", $1);}
+		| '\n' {printf("empty input^^\n"); printf("Last result: %f\n", result);}
 		| error '\n'	{yyerrok;}
 		;
 expr	: expr '+' term { $$ = $1 + $3; }
 		| expr '-' term { $$ = $1 - $3; }
-		| CEIL '(' expr ')' {$$ = ceil($3);} // $2보다 작지 않은 최소 크기의 정수 반환
-		| FLOOR '(' expr ')' {$$ = floor($3);} //$2보다 크지않은 최대크기의 정수 반환
 		| term { $$ = $1; }
 		;
 term	: term '*' factor { $$ = $1 * $3; }
 		| term '/' factor { $$ = $1 / $3; }
 		| term '^' factor { $$ = pow($1, $3); }
+		| CEIL factor {$$ = ceil($2);}		// $2보다 작지 않은 최소 크기의 정수 반환
+		| FLOOR factor {$$ = floor($2);}	//$2보다 크지않은 최대크기의 정수 반환
 		| factor { $$ = $1; }
 		;
 factor	: '(' expr ')' { $$ = $2; }
@@ -58,8 +59,8 @@ int yylex(void) {
 		char *word;
 		ungetc(c,stdin);
 		word = getword(c); 
-		if (strcmp(word,"ceil") == 0) {printf("c\n"); return CEIL;}
-		if (strcmp(word,"floor") == 0) {printf("f\n");return FLOOR;}
+		if (strcmp(word,"ceil") == 0) return CEIL;
+		if (strcmp(word,"floor") == 0) return FLOOR;
 	}
 	return c;
 }
@@ -84,4 +85,4 @@ int main(int argc, char *argv[])
 {
 	printf("Hello. Let's calculate~\n");
 	yyparse();
-} 
+}
