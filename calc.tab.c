@@ -1366,14 +1366,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 31 "calc.y"
-    {(yyval) = ceil((yyvsp[(2) - (4)]));;}
+    {(yyval) = ceil((yyvsp[(3) - (4)]));;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
 #line 32 "calc.y"
-    {(yyval) = floor((yyvsp[(2) - (4)]));;}
+    {(yyval) = floor((yyvsp[(3) - (4)]));;}
     break;
 
   case 10:

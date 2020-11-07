@@ -28,8 +28,8 @@ line	: expr '\n'	{ result = $1; printf("Result: %f\n", $1);}
 		;
 expr	: expr '+' term { $$ = $1 + $3; }
 		| expr '-' term { $$ = $1 - $3; }
-		| CEIL '(' expr ')' {$$ = ceil($2);} // $2보다 작지 않은 최소 크기의 정수 반환
-		| FLOOR '(' expr ')' {$$ = floor($2);} //$2보다 크지않은 최대크기의 정수 반환
+		| CEIL '(' expr ')' {$$ = ceil($3);} // $2보다 작지 않은 최소 크기의 정수 반환
+		| FLOOR '(' expr ')' {$$ = floor($3);} //$2보다 크지않은 최대크기의 정수 반환
 		| term { $$ = $1; }
 		;
 term	: term '*' factor { $$ = $1 * $3; }
